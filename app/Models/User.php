@@ -6,11 +6,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -44,5 +45,46 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Relacionamento com empréstimos
+     */
+    public function emprestimos()
+    {
+        return $this->hasMany(Emprestimos::class);
+    }
+
+    /**
+     * Empréstimos ativos do usuário
+     */
+    public function emprestimosAtivos()
+    {
+        return $this->emprestimos()->where('status', 'ativo');
+    }
+
+    /**
+     * Verifica se o usuário tem empréstimos em atraso
+     */
+    public function hasEmprestimosAtrasados()
+    {
+        return $this->emprestimos()
+                   ->where('status', 'ativo')
+                   ->where('data_prevista_devolucao', '<', now())
+                   ->exists();
+    }
+
+    /**
+     * Verifica se o usuário pode fazer empréstimo
+     */
+    public function podeEmprestar()
+    {
+        $emprestimosAtivos = $this->emprestimosAtivos()->count();
+        $emprestimosAtrasados = $this->emprestimos()
+            ->where('status', 'ativo')
+            ->where('data_prevista_devolucao', '<', now())
+            ->count();
+
+        return $emprestimosAtivos < 3 && $emprestimosAtrasados === 0;
     }
 }

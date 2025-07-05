@@ -1,0 +1,67 @@
+# Arquivo de teste para a API da Biblioteca
+# Use um cliente REST como Postman, Insomnia ou curl
+
+### Status da API
+GET http://localhost:8000/api/v1/status
+
+### Registrar usuário
+POST http://localhost:8000/api/v1/register
+Content-Type: application/json
+
+{
+    "name": "João Silva",
+    "email": "joao@teste.com",
+    "password": "senha123",
+    "password_confirmation": "senha123"
+}
+
+### Login
+POST http://localhost:8000/api/v1/login
+Content-Type: application/json
+
+{
+    "email": "admin@biblioteca.com",
+    "password": "password"
+}
+
+### Listar livros (público)
+GET http://localhost:8000/api/v1/books
+
+### Listar livros com busca
+GET http://localhost:8000/api/v1/books?search=Dom&category_id=1
+
+### Obter livro específico
+GET http://localhost:8000/api/v1/books/1
+
+### Livros disponíveis
+GET http://localhost:8000/api/v1/books/disponveis
+
+### Listar autores
+GET http://localhost:8000/api/v1/authors
+
+### Listar categorias
+GET http://localhost:8000/api/v1/categories
+
+### Criar empréstimo (requer token)
+POST http://localhost:8000/api/v1/emprestimos
+Authorization: Bearer YOUR_TOKEN_HERE
+Content-Type: application/json
+
+{
+    "book_id": 1,
+    "user_id": 1,
+    "data_prevista_devolucao": "2025-08-01",
+    "observacoes": "Primeiro empréstimo"
+}
+
+### Meus empréstimos (requer token)
+GET http://localhost:8000/api/v1/emprestimos/meus
+Authorization: Bearer YOUR_TOKEN_HERE
+
+### Relatório de empréstimos (requer token)
+GET http://localhost:8000/api/v1/emprestimos/relatorio
+Authorization: Bearer YOUR_TOKEN_HERE
+
+### Empréstimos atrasados (requer token)
+GET http://localhost:8000/api/v1/emprestimos/atrasados
+Authorization: Bearer YOUR_TOKEN_HERE
